@@ -34,6 +34,6 @@ jobs:
       - deploy:
            name: Push application Docker image
            command: |
-               echo ${HELLO_TOKEN} | docker login -u "vguar+helloworld" --password-stdin quay.io
+               echo ${HELLO_TOKEN} | docker login -u "vguar+circleci" --password-stdin quay.io
                docker tag app:latest quay.io/vguar/k8s-demo-app:latest
                docker push quay.io/vguar/k8s-demo-app:latest
