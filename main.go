@@ -23,6 +23,7 @@ var (
 	node       string
 	cluster    string
 	message    string
+	namespace  string
 )
 
 func main() {
@@ -37,7 +38,8 @@ func main() {
 	zone, _ = metadata.Zone()
 	node, _ = metadata.Hostname()
 	cluster, _ = metadata.InstanceAttributeValue("cluster-name")
-	message = lookupEnvOrString("K8S_DEMO_APP_MESSAGE", "Hello K8s World!")
+	namespace, _ = metadata.InstanceAttributeValue("namespace")
+	message = lookupEnvOrString("K8S_DEMO_APP_MESSAGE", "Hello Manawa !")
 
 	// HTTP Server
 	router := http.NewServeMux()
@@ -108,12 +110,13 @@ func index() http.Handler {
 		tmpl := template.Must(template.ParseFiles("template.html"))
 
 		tempData := map[string]interface{}{
-			"Zone":     zone,
-			"Hostname": hostname,
-			"Node":     node,
-			"Cluster":  cluster,
-			"Message":  message,
-			"Path":     r.URL.Path,
+			"Zone":      zone,
+			"Hostname":  hostname,
+			"Node":      node,
+			"Cluster":   cluster,
+			"Namespace": namespace,
+			"Message":   message,
+			"Path":      r.URL.Path,
 		}
 
 		tmpl.Execute(w, tempData)
