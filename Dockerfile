@@ -9,4 +9,4 @@ COPY template.html /
 
 USER ${APP_UID}:${APP_GID}
 
-CMD ["/k8s-demo-app"]
+CMD ["k8s-demo-app"]
