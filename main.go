@@ -11,6 +11,8 @@ import (
 	"time"
 
 	"cloud.google.com/go/compute/metadata"
+	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/rest"
 )
 
 const AppName = "k8s-demo-app"
@@ -27,6 +29,16 @@ var (
 )
 
 func main() {
+	// creates the in-cluster config
+	config, err := rest.InClusterConfig()
+	if err != nil {
+		panic(err.Error())
+	}
+	// creates the clientset
+	clientset, err := kubernetes.NewForConfig(config)
+	if err != nil {
+		panic(err.Error())
+	}
 	flag.StringVar(&listenAddr, "listen-addr", lookupEnvOrString("K8S_DEMO_APP_LISTEN_ADDR", ":8080"), "server listen address")
 	flag.Parse()
 
@@ -38,8 +50,12 @@ func main() {
 	zone, _ = metadata.Zone()
 	node, _ = metadata.Hostname()
 	cluster, _ = metadata.InstanceAttributeValue("cluster-name")
-	namespace, _ = metadata.InstanceAttributeValue("namespace")
 	message = lookupEnvOrString("K8S_DEMO_APP_MESSAGE", "Hello Manawa !")
+
+	namespace, _, err := kubeconfig.Namespace()
+	if err != nil {
+		panic(err)
+	}
 
 	// HTTP Server
 	router := http.NewServeMux()
